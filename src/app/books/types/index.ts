@@ -9,3 +9,11 @@ export interface Book {
     pages: string[];
   }[];
 }
+
+export interface ReadingMetrics {
+  bookId: number;
+  totalReadingTime: number;
+  pageReadingTimes: { [pageNumber: number]: number };
+  startTime: number | null;
+  currentPage: number;
+}

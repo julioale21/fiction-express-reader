@@ -3,8 +3,9 @@ import React from "react";
 import { useBooks } from "@/app/books/hooks/tanstack/useQueryGetBooks";
 import { motion } from "framer-motion";
 import { Typography, Box, Grid, useTheme } from "@mui/material";
-import { BookCard, BookListError, Instructions, LoadingBooks } from ".";
+import { BookCard, BookListError, Instructions } from ".";
 import { useInstructions } from "../hooks/useInstructions";
+import { CustomLoading } from "@/common/components";
 
 interface BookListProps {
   listTitle: string;
@@ -15,7 +16,8 @@ const BooksList: React.FC<BookListProps> = ({ listTitle }) => {
   const { showInstructions, toggleInstructions } = useInstructions();
   const theme = useTheme();
 
-  if (isLoading) return <LoadingBooks />;
+  if (isLoading)
+    return <CustomLoading text="Cargando tu biblioteca mágica ..." />;
   if (error) return <BookListError />;
 
   return (

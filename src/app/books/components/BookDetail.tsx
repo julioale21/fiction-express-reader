@@ -1,85 +1,84 @@
 "use client";
 
-import React, { useState } from "react";
-import { useQueryBookById } from "@/app/books/hooks/tanstack/useQueryBookById";
-
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
   Container,
   Paper,
-  CircularProgress,
   IconButton,
+  Button,
 } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
+import { useBookNavigation } from "../hooks/useBookNavigation";
+import { useReadingMetricsHook } from "../hooks/useReadingMetricsHook";
+import { formatTimeFunction } from "@/utils/time";
+import { DialogMetrics } from "./DialogMetrics";
+import { BookError } from "./BookError";
+import { CustomLoading } from "@/common/components";
+import { FinishBookCelebration } from "./FinishBookCelebration";
 
 interface BookDetailProps {
   bookId: number;
 }
 
 const BookDetail: React.FC<BookDetailProps> = ({ bookId }) => {
-  const { data: book, isLoading, error } = useQueryBookById(bookId);
-  const [currentChapter, setCurrentChapter] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const {
+    book,
+    isLoading,
+    error,
+    currentChapter,
+    currentPage,
+    totalPages,
+    currentPageNumber,
+    isLastPage,
+    nextPage,
+    prevPage,
+  } = useBookNavigation(bookId);
 
-  if (isLoading) {
-    return (
-      <Container
-        maxWidth="md"
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <CircularProgress />
-      </Container>
-    );
-  }
+  const {
+    startReading,
+    updatePageTime,
+    finishReading,
+    getPageReadingTime,
+    showMetrics,
+    setShowMetrics,
+    finalMetrics,
+    setFinalMetrics,
+  } = useReadingMetricsHook();
 
-  if (error || !book) {
-    return (
-      <Container maxWidth="md" sx={{ textAlign: "center", mt: 4 }}>
-        <Typography variant="h6" color="error">
-          ¡Ups! No pudimos encontrar el libro. ¿Quizás se escondió en otra
-          estantería?
-        </Typography>
-      </Container>
-    );
-  }
+  const [showCelebration, setShowCelebration] = useState(false);
 
-  const totalPages = book.chapters.reduce(
-    (sum, chapter) => sum + chapter.pages.length,
-    0
-  );
-  const currentPageNumber =
-    book.chapters
-      .slice(0, currentChapter)
-      .reduce((sum, chapter) => sum + chapter.pages.length, 0) +
-    currentPage +
-    1;
-
-  const nextPage = () => {
-    if (currentPage < book.chapters[currentChapter].pages.length - 1) {
-      setCurrentPage(currentPage + 1);
-    } else if (currentChapter < book.chapters.length - 1) {
-      setCurrentChapter(currentChapter + 1);
-      setCurrentPage(0);
+  useEffect(() => {
+    if (book) {
+      startReading(bookId);
     }
+  }, [book, bookId, startReading]);
+
+  useEffect(() => {
+    if (book) {
+      const pageId = currentChapter * 100 + currentPage;
+      updatePageTime(pageId);
+    }
+  }, [book, currentChapter, currentPage, updatePageTime]);
+
+  const handleFinish = () => {
+    setShowCelebration(true);
+
+    setTimeout(() => {
+      setShowCelebration(false);
+      const metrics = finishReading();
+      setFinalMetrics(metrics);
+      setShowMetrics(true);
+    }, 5000);
   };
 
-  const prevPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    } else if (currentChapter > 0) {
-      setCurrentChapter(currentChapter - 1);
-      setCurrentPage(book.chapters[currentChapter - 1].pages.length - 1);
-    }
-  };
+  if (isLoading) return <CustomLoading text="Cargando tu libro ..." />;
+
+  if (error || !book) return <BookError />;
 
   return (
     <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
@@ -92,6 +91,7 @@ const BookDetail: React.FC<BookDetailProps> = ({ bookId }) => {
           minHeight: "70vh",
           display: "flex",
           flexDirection: "column",
+          position: "relative",
         }}
       >
         <Typography
@@ -154,6 +154,8 @@ const BookDetail: React.FC<BookDetailProps> = ({ bookId }) => {
           </AnimatePresence>
         </Box>
 
+        {showCelebration && <FinishBookCelebration />}
+
         <Box
           sx={{
             display: "flex",
@@ -171,17 +173,28 @@ const BookDetail: React.FC<BookDetailProps> = ({ bookId }) => {
           <Typography variant="body2">
             Página {currentPageNumber} de {totalPages}
           </Typography>
-          <IconButton
-            onClick={nextPage}
-            disabled={
-              currentChapter === book.chapters.length - 1 &&
-              currentPage === book.chapters[currentChapter].pages.length - 1
-            }
-          >
-            <ArrowForwardIcon />
-          </IconButton>
+          {isLastPage ? (
+            <Button variant="contained" color="primary" onClick={handleFinish}>
+              Finalizar
+            </Button>
+          ) : (
+            <IconButton onClick={nextPage}>
+              <ArrowForwardIcon />
+            </IconButton>
+          )}
+        </Box>
+
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="body2">
+            Tiempo en esta página:{" "}
+            {formatTimeFunction(
+              getPageReadingTime(currentChapter * 100 + currentPage)
+            )}
+          </Typography>
         </Box>
       </Paper>
+
+      <DialogMetrics showMetrics={showMetrics} finalMetrics={finalMetrics} />
     </Container>
   );
 };

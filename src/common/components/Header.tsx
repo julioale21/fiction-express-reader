@@ -1,14 +1,7 @@
 "use client";
 import React from "react";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Box,
-  Button,
-  IconButton,
-} from "@mui/material";
-import Image from "next/image";
+import { AppBar, Toolbar, Box, Button, IconButton } from "@mui/material";
+
 import MenuIcon from "@mui/icons-material/Menu";
 import { menuItems } from "../constants/menu-items.constants";
 import theme from "@/config/themes/theme";

@@ -1,7 +1,9 @@
 export { BookCard } from "./BookCard";
 export { BookDetail } from "./BookDetail";
+export { BookError } from "./BookError";
 export { BookListError } from "./BookListError";
 export { BookListInstructions } from "./BookListInstructions";
 export { BooksList } from "./BooksList";
+export { DialogMetrics } from "./DialogMetrics";
 export { Instructions } from "./Instructions";
-export { LoadingBooks } from "./LoadingBooks";
+import { FinishBookCelebration } from "./FinishBookCelebration";
