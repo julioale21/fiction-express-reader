@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import { formatTimeFunction } from "@/utils/time";
 import {
@@ -9,7 +8,7 @@ import {
   DialogActions,
   Button,
 } from "@mui/material";
-import router from "next/router";
+import Link from "next/link";
 
 interface DialogMetricsProps {
   showMetrics: boolean;
@@ -25,7 +24,7 @@ const DialogMetrics: React.FC<DialogMetricsProps> = ({
   finalMetrics,
 }) => {
   return (
-    <Dialog open={showMetrics} onClose={() => router.push("/books")}>
+    <Dialog open={showMetrics} onClose={() => {}}>
       <DialogTitle>Métricas de Lectura</DialogTitle>
       <DialogContent>
         {finalMetrics && (
@@ -54,7 +53,9 @@ const DialogMetrics: React.FC<DialogMetricsProps> = ({
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => router.push("/books")}>Cerrar</Button>
+        <Link href="/books">
+          <Button>Cerrar</Button>
+        </Link>
       </DialogActions>
     </Dialog>
   );
