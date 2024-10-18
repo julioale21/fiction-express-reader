@@ -1,6 +1,6 @@
 import { AnimatePresence } from "framer-motion";
 import { BookListInstructions } from "./";
-import { instructions } from "@/mocks";
+import { instructions } from "@/constants";
 
 interface InstructionsProps {
   show: boolean;
