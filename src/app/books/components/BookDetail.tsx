@@ -144,7 +144,6 @@ const BookDetail: React.FC<BookDetailProps> = ({ bookId }) => {
               ) : (
                 <Typography
                   variant="body1"
-                  paragraph
                   sx={{ fontSize: "1.2rem", lineHeight: 1.6 }}
                 >
                   {book.chapters[currentChapter].pages[currentPage]}
