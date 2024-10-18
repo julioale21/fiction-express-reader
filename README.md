@@ -1,36 +1,135 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<p align="center">
+    <img width="400" src="https://es.fictionexpress.com/static/images/logo/fiction-express.svg">
+   </p>
 
-## Getting Started
+# Fiction Express Reader App - Test Técnico
 
-First, run the development server:
+## Objetivos:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Webapp para niños: Selección y Lectura de Libros
+Requisitos Técnicos
+Frontend: React.js
+Backend: Node.js
+Base de datos: Fake API utilizando json-server
+Diseño Responsive: La webapp debe ser accesible desde dispositivos móviles y navegadores web.
+Bonus: Métricas sobre el tiempo de lectura por usuario y libro.
+
+
+### Parte 1: Desarrollo Práctico
+
+#### Requisitos Funcionales
+
+1. Login de Usuario:
+Crear un sistema de login básico (no es necesario implementar autenticación completa, pero puede ser con local storage, mock data o un simple formulario que valide el acceso de los usuarios).
+Cada usuario puede ser identificado con un ID único (puede ser generado o ingresado manualmente).
+2. Catálogo de libros:
+Utilizar un json-server que simule una API y provea un JSON con un listado de 2 libros de texto.
+El JSON debe contener la siguiente información sobre cada libro:
+Título del libro
+Autor
+Contenido (dividido por páginas, con una estructura como un array de strings o párrafos)
+Identificador único del libro
+Ejemplo de JSON para libros:
+
+```
+{
+  "books": [
+    {
+      "id": 1,
+      "title": "Las aventuras de Juan",
+      "author": "Autor Ficticio",
+      "pages": [
+        "Capítulo 1: Había una vez en un lugar muy lejano...",
+        "Capítulo 2: Continuaron las aventuras de Juan...",
+        "Capítulo 3: El final de la historia se acercaba..."
+      ]
+    },
+    {
+      "id": 2,
+      "title": "El viaje de la imaginación",
+      "author": "Escritor Desconocido",
+      "pages": [
+        "Capítulo 1: La imaginación puede llevarte a lugares increíbles...",
+        "Capítulo 2: A medida que el viaje continuaba, las posibilidades parecían infinitas...",
+        "Capítulo 3: El fin de la aventura."
+      ]
+    }
+  ]
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Selección del libro:
+Crear una interfaz para que el usuario pueda seleccionar uno de los libros disponibles.
+Mostrar el título, autor y una pequeña descripción o resumen del libro.
+4. Lector de texto:
+Una vez que el libro sea seleccionado, debe haber una vista de lector de texto donde el contenido se muestre página por página.
+Debe haber botones de "Siguiente página" y "Página anterior" para navegar entre las páginas del libro.
+5. Métricas de lectura:
+Registrar cuánto tiempo pasa el usuario en cada página (en milisegundos).
+Registrar el tiempo total que el usuario pasa leyendo un libro.
+Al final de la lectura, mostrar las métricas de:
+Tiempo de lectura total del libro.
+Tiempo promedio por página.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+#### Detalles adicionales:
 
-## Learn More
+La aplicación debe ser responsive y funcionar tanto en dispositivos móviles como en navegadores de escritorio.
+El diseño puede ser sencillo, pero debe ser funcional y fácil de usar.
+La API con json-server debe simular correctamente la funcionalidad de un servidor, proveyendo datos de los libros y permitiendo consumirlos.
 
-To learn more about Next.js, take a look at the following resources:
+#### Herramientas sugeridas:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Frontend: React.js
+- Backend (para métricas y usuarios): Node.js + json-server para simular una API.
+- Estado en el frontend: Utilizar React hooks, Context API o Redux.
+- Base de datos mock (Fake API): json-server o cualquier otra herramienta que permita crear una fake API rápidamente.
+- Métricas: Pueden ser guardadas en memoria local (localStorage o state del frontend). No es necesario persistir los datos en una base de datos.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+### Parte 1: Solución propuesta:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+##### Tools
+- Nextjs 14 con Typescript
+- Material UI
+- React Query (Tanstack)
+- Nestjs
+- Lottie
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+El proyecto esta estructurado de la siguiente manera
+
+    ├── docs                 # doc para el Readme
+    ├── public               # Archivos estáticos
+    ├── src
+        ├── app              # Nuevo sistema de rutas de Nextjs
+          ├── books
+            ├── [id]          # Ruta dinámica al detalle del libro
+              ── page.tsx
+            ├── components    # Componentes espedificos de la entidad
+            ├── contexts      # contexts espedificos de la entidad
+            ├── hooks         # Custom hooks y react query hooks 
+            ├── types         # Interfaces y tipos
+              ── page.tsx
+              ── layout.tsx 
+            ── page.tsx
+            ── layout.tsx 
+          ├── common          # Dentro de commons hay varias carpetas como components, hooks, pero que son compartidas en todo el proyecto
+          ├── config          # Configuraciones como los providers, react query clients, etc
+          ├── constants        
+          ├── infrastructure  # Aqui se guarda el json que se utiliza con json server
+          ├── utils
+    └── README.md            # The first page that the user will view when will visit the repository.
+    .env.local
+    
+## Despliegue local
+```
+Clonar el repositorio
+
+Ejecutar el comando npm install
+
+Setear el .env
+
+Ejecutar el comando npm run dev
+```
+
