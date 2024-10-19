@@ -1,3 +1,5 @@
+
+export { BasicAppbar } from "./BasicAppbar";
 export { CustomLoading } from "./CustomLoading";
 export { CustomPasswordField } from "./CustomPasswordField";
 export { CustomTextField } from "./CustomTextField";
