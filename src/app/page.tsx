@@ -1,13 +1,6 @@
 "use client";
 import React from "react";
-import {
-  Box,
-  Typography,
-  Container,
-  Button,
-  AppBar,
-  Toolbar,
-} from "@mui/material";
+import { Box, Typography, Container, Button } from "@mui/material";
 import Link from "next/link";
 import Image from "next/image";
 import theme from "@/config/themes/theme";
@@ -25,7 +18,6 @@ const Home: React.FC = () => {
         justifyContent: "space-between",
       }}
     >
-
       <BasicAppbar />
 
       <Container
