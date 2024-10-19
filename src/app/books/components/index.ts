@@ -6,4 +6,4 @@ export { BookListInstructions } from "./BookListInstructions";
 export { BooksList } from "./BooksList";
 export { DialogMetrics } from "./DialogMetrics";
 export { Instructions } from "./Instructions";
-import { FinishBookCelebration } from "./FinishBookCelebration";
+export { FinishBookCelebration } from "./FinishBookCelebration";
