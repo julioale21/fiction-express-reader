@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import Lottie from "lottie-react";
@@ -8,6 +8,7 @@ const CelebrationAnimation = () => {
 
   useEffect(() => {
     import("@/animations/celebration.json").then((data) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setAnimationData(data.default as any);
     });
   }, []);
