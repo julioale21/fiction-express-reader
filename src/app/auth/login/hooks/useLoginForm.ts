@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 
-type FormData = {
+export type LoginFormData = {
   dni: string;
   password: string;
 };
@@ -13,28 +13,22 @@ const useLoginForm = () => {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>();
+  } = useForm<LoginFormData>();
 
   const [error, setError] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [showPassword, setShowPassword] = React.useState(false);
+
   const router = useRouter();
 
   const dniInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
-  const randomDniName = useRef(
-    `dni_${Math.random().toString(36).substring(2, 15)}`
-  );
-  const randomPasswordName = useRef(
-    `password_${Math.random().toString(36).substring(2, 15)}`
-  );
 
   useEffect(() => {
     if (dniInputRef.current) dniInputRef.current.readOnly = false;
     if (passwordInputRef.current) passwordInputRef.current.readOnly = false;
   }, []);
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: LoginFormData) => {
     setError(null);
     setIsLoading(true);
 
@@ -53,21 +47,16 @@ const useLoginForm = () => {
     }
   };
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-
   return {
     control,
     handleSubmit,
     errors,
     error,
     isLoading,
-    showPassword,
     dniInputRef,
     passwordInputRef,
-    randomDniName,
-    randomPasswordName,
     onSubmit,
-    handleClickShowPassword,
+    formValue: FormData,
   };
 };
 
