@@ -1,7 +1,6 @@
-
 "use client";
 
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
@@ -14,8 +13,11 @@ import {
   Container,
   useTheme,
   CircularProgress,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import { motion } from "framer-motion";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 type FormData = {
   dni: string;
@@ -30,8 +32,23 @@ const LoginForm = () => {
   } = useForm<FormData>();
   const [error, setError] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
   const router = useRouter();
   const theme = useTheme();
+
+  const dniInputRef = useRef<HTMLInputElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
+  const randomDniName = useRef(
+    `dni_${Math.random().toString(36).substring(2, 15)}`
+  );
+  const randomPasswordName = useRef(
+    `password_${Math.random().toString(36).substring(2, 15)}`
+  );
+
+  useEffect(() => {
+    if (dniInputRef.current) dniInputRef.current.readOnly = false;
+    if (passwordInputRef.current) passwordInputRef.current.readOnly = false;
+  }, []);
 
   const onSubmit = async (data: FormData) => {
     setError(null);
@@ -46,11 +63,13 @@ const LoginForm = () => {
     setIsLoading(false);
 
     if (result?.error) {
-      setError(result.error);
+      setError("Algo salio mal, revisa tus credenciales");
     } else if (result?.ok) {
       router.push("/dashboard");
     }
   };
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   return (
     <Container component="main" maxWidth="xs">
@@ -61,7 +80,6 @@ const LoginForm = () => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          // background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
         }}
       >
         <motion.div
@@ -93,35 +111,34 @@ const LoginForm = () => {
             >
               ¡Bienvenido, Explorador!
             </Typography>
-            {/* <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <img
-                src="/api/placeholder/150/150"
-                alt="Mascot"
-                style={{ marginBottom: "20px" }}
-              />
-            </motion.div> */}
+
             <Box
               component="form"
               onSubmit={handleSubmit(onSubmit)}
               sx={{ mt: 1, width: "100%" }}
+              autoComplete="off"
             >
+              <input type="text" style={{ display: "none" }} />
               <Controller
                 name="dni"
                 control={control}
                 defaultValue=""
-                rules={{ required: "DNI es requerido" }}
+                rules={{ required: "Debe ingresar tu DNI" }}
                 render={({ field }) => (
                   <TextField
                     {...field}
+                    inputRef={dniInputRef}
                     margin="normal"
                     fullWidth
-                    id="dni"
+                    id={randomDniName.current}
+                    name={randomDniName.current}
                     label="Número Mágico (DNI)"
-                    autoComplete="dni"
+                    autoComplete="off"
                     autoFocus
                     error={!!errors.dni}
                     helperText={errors.dni?.message}
                     InputProps={{
+                      readOnly: true,
                       sx: {
                         borderRadius: "10px",
                         backgroundColor: theme.palette.background.default,
@@ -137,19 +154,33 @@ const LoginForm = () => {
                 name="password"
                 control={control}
                 defaultValue=""
-                rules={{ required: "Contraseña es requerida" }}
+                rules={{ required: "Debe ingresar tu Palabra Secreta" }}
                 render={({ field }) => (
                   <TextField
                     {...field}
+                    inputRef={passwordInputRef}
                     margin="normal"
                     fullWidth
                     label="Palabra Secreta"
-                    type="password"
-                    id="password"
-                    autoComplete="current-password"
+                    type={showPassword ? "text" : "password"}
+                    id={randomPasswordName.current}
+                    name={randomPasswordName.current}
+                    autoComplete="new-password"
                     error={!!errors.password}
                     helperText={errors.password?.message}
                     InputProps={{
+                      readOnly: true,
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleClickShowPassword}
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
                       sx: {
                         borderRadius: "10px",
                         backgroundColor: theme.palette.background.default,
