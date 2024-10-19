@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useForm, Controller } from "react-hook-form";
+import React from "react";
+
+import { Controller } from "react-hook-form";
 import {
   Box,
   Typography,
@@ -11,65 +10,30 @@ import {
   Button,
   Paper,
   Container,
-  useTheme,
   CircularProgress,
   InputAdornment,
   IconButton,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-
-type FormData = {
-  dni: string;
-  password: string;
-};
+import useLoginForm from "../hooks/useLoginForm";
+import theme from "@/config/themes/theme";
 
 const LoginForm = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>();
-  const [error, setError] = React.useState<string | null>(null);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [showPassword, setShowPassword] = React.useState(false);
-  const router = useRouter();
-  const theme = useTheme();
-
-  const dniInputRef = useRef<HTMLInputElement>(null);
-  const passwordInputRef = useRef<HTMLInputElement>(null);
-  const randomDniName = useRef(
-    `dni_${Math.random().toString(36).substring(2, 15)}`
-  );
-  const randomPasswordName = useRef(
-    `password_${Math.random().toString(36).substring(2, 15)}`
-  );
-
-  useEffect(() => {
-    if (dniInputRef.current) dniInputRef.current.readOnly = false;
-    if (passwordInputRef.current) passwordInputRef.current.readOnly = false;
-  }, []);
-
-  const onSubmit = async (data: FormData) => {
-    setError(null);
-    setIsLoading(true);
-
-    const result = await signIn("credentials", {
-      dni: data.dni,
-      password: data.password,
-      redirect: false,
-    });
-
-    setIsLoading(false);
-
-    if (result?.error) {
-      setError("Algo salio mal, revisa tus credenciales");
-    } else if (result?.ok) {
-      router.push("/dashboard");
-    }
-  };
-
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
+    errors,
+    error,
+    isLoading,
+    showPassword,
+    dniInputRef,
+    passwordInputRef,
+    randomDniName,
+    randomPasswordName,
+    onSubmit,
+    handleClickShowPassword,
+  } = useLoginForm();
 
   return (
     <Container component="main" maxWidth="xs">
