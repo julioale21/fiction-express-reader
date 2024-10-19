@@ -60,4 +60,4 @@ const useLoginForm = () => {
   };
 };
 
-export default useLoginForm;
+export { useLoginForm };

@@ -4,7 +4,7 @@ import React from "react";
 
 import { Box, Typography, Paper, Container } from "@mui/material";
 import { motion } from "framer-motion";
-import useLoginForm from "../hooks/useLoginForm";
+import { useLoginForm } from "../hooks/useLoginForm";
 import theme from "@/config/themes/theme";
 import {
   CustomPasswordField,
@@ -17,7 +17,7 @@ const LoginForm = () => {
   const {
     control,
     handleSubmit,
-    error,
+    error,  
     isLoading,
     dniInputRef,
     passwordInputRef,
