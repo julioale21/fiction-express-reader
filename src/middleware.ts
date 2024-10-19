@@ -1,6 +1,3 @@
-// export { default } from "next-auth/middleware";
-
-// export const config = { matcher: ["/dashboard/:path*", "/api/:path*"] };
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
@@ -8,17 +5,22 @@ import { getToken } from "next-auth/jwt";
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
-  // Define las rutas públicas que no requieren autenticación
-  const publicPaths = ["/", "/auth/login"];
+  const publicPaths = ["/", "/auth/login", "/auth/register"];
+  const isPublicPath = publicPaths.some((publicPath) =>
+    path.startsWith(publicPath)
+  );
 
-  const isPublicPath = publicPaths.includes(path);
+  const excludedDirectories = ["/_next/", "/public/"];
+  const isExcludedDirectory = excludedDirectories.some((excludedDirectory) =>
+    path.startsWith(excludedDirectory)
+  );
 
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  if (!isPublicPath && !token) {
+  if (!isPublicPath && !isExcludedDirectory && !token) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
@@ -26,5 +28,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    "/((?!_next|public|auth|login|register).*)",
+  ],
 };
