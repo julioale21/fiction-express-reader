@@ -17,7 +17,7 @@ const LoginForm = () => {
   const {
     control,
     handleSubmit,
-    error,  
+    error,
     isLoading,
     dniInputRef,
     passwordInputRef,
@@ -68,6 +68,7 @@ const LoginForm = () => {
                 rules={{ required: "Debes ingresar tu DNI" }}
                 label="Número Mágico (DNI)"
                 inputRef={dniInputRef}
+                type="number"
               />
 
               <CustomPasswordField

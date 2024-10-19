@@ -10,7 +10,6 @@ import {
   PathValue,
 } from "react-hook-form";
 
-
 type CustomTextFieldProps<
   TFieldValues extends FieldValues,
   TName extends Path<TFieldValues>
@@ -22,6 +21,7 @@ type CustomTextFieldProps<
     "valueAsNumber" | "valueAsDate" | "setValueAs" | "disabled"
   >;
   defaultValue?: PathValue<TFieldValues, TName>;
+  type?: string;
 };
 
 function CustomTextField<
@@ -34,6 +34,7 @@ function CustomTextField<
   defaultValue,
   label,
   inputRef,
+  type,
   ...rest
 }: CustomTextFieldProps<TFieldValues, TName>): React.ReactElement {
   return (
@@ -58,6 +59,7 @@ function CustomTextField<
             }
           }}
           margin="normal"
+          type={type}
           fullWidth
           id={name}
           label={label}

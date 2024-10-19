@@ -1,7 +1,7 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 import { getSession } from "next-auth/react";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Asegúrate de que esta ruta sea correcta
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"; 
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BOOKS_SERVER_URL,
@@ -9,16 +9,13 @@ const axiosInstance = axios.create({
   headers: { "content-type": "application/json" },
 });
 
-// Interceptor de solicitud común para cliente y servidor
 axiosInstance.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     let session;
 
     if (typeof window !== "undefined") {
-      // Lado del cliente
       session = await getSession();
     } else {
-      // Lado del servidor
       session = await getServerSession(authOptions);
     }
 
@@ -30,7 +27,6 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Interceptor de respuesta
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -41,7 +37,6 @@ axiosInstance.interceptors.response.use(
         await signOut({ redirect: false });
         window.location.href = "/auth/login";
       } else {
-        // Lado del servidor
         console.error("Error 401 en el servidor:", error);
       }
     }
