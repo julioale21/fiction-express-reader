@@ -1,4 +1,5 @@
 import { Book } from "@/app/books/types";
+import axiosInstance from "@/config/axios";
 import getQueryClient from "@/config/client/getQueryClient";
 import { useQuery, QueryFunction } from "@tanstack/react-query";
 
@@ -11,18 +12,13 @@ if (!booksUrl) {
 }
 
 const getBooks: QueryFunction<Book[]> = async () => {
-  const response = await fetch(`${booksUrl}/books`, {
-    headers: {
-      "Cache-Control": "no-cache",
-      Pragma: "no-cache",
-    },
-  });
 
-  if (!response.ok) {
-    throw new Error("Network response was not ok");
+  const res = await axiosInstance.get("/books");
+  const { data } = res;
+
+  if (!data) {
+    throw new Error("Error fetching books");
   }
-
-  const data = await response.json();
 
   return data;
 };

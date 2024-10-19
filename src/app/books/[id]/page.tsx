@@ -7,6 +7,7 @@ import {
 } from "@/app/books/hooks/tanstack/useQueryBookById";
 import getQueryClient from "@/config/client/getQueryClient";
 import { BookDetail } from "../components";
+import { useSession } from "next-auth/react";
 
 // Esta función se ejecuta en el servidor
 export async function generateMetadata({ params }: { params: { id: string } }) {

@@ -1,43 +1,21 @@
 "use client";
 
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { ReadingMetricsProvider } from "@/app/books/contexts/ReadingMetricsContext";
-import { useState } from "react";
 import SessionAuthProvider from "../context/SessionAuthProvider";
-
-// Create a theme instance.
-const theme = createTheme({
-  typography: {
-    fontFamily: "var(--font-geist-sans), Roboto, Arial, sans-serif",
-  },
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: {
-        body: {
-          fontFamily: "var(--font-geist-sans), Roboto, Arial, sans-serif",
-        },
-      },
-    },
-  },
-});
+import theme from "../themes/theme";
+import getQueryClient from "../client/getQueryClient";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            staleTime: 60 * 1000, // 1 minute
-          },
-        },
-      })
-  );
+  const queryClient = getQueryClient();
 
   return (
     <SessionAuthProvider>
       <QueryClientProvider client={queryClient}>
+        <ReactQueryDevtools initialIsOpen={false} />
         <ThemeProvider theme={theme}>
           <ReadingMetricsProvider>
             <CssBaseline />

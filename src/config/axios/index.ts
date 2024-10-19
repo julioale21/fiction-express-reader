@@ -1,4 +1,7 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
+import { getSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Asegúrate de que esta ruta sea correcta
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BOOKS_SERVER_URL,
@@ -6,50 +9,44 @@ const axiosInstance = axios.create({
   headers: { "content-type": "application/json" },
 });
 
-if (typeof window !== "undefined") {
-  // Interceptores del lado del cliente
-  axiosInstance.interceptors.request.use(
-    async (config: InternalAxiosRequestConfig) => {
-      const { getSession } = await import("next-auth/react");
-      const session = await getSession();
+// Interceptor de solicitud común para cliente y servidor
+axiosInstance.interceptors.request.use(
+  async (config: InternalAxiosRequestConfig) => {
+    let session;
 
-      if (session?.user.token) {
-        config.headers.set("Authorization", `Bearer ${session.user.token}`);
-      }
-      return config;
-    },
-    (error) => Promise.reject(error)
-  );
+    if (typeof window !== "undefined") {
+      // Lado del cliente
+      session = await getSession();
+    } else {
+      // Lado del servidor
+      session = await getServerSession(authOptions);
+    }
 
-  axiosInstance.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-      if (error?.response?.status === 401) {
+    if (session?.user?.token) {
+      config.headers.set("Authorization", `Bearer ${session.user.token}`);
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Interceptor de respuesta
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error?.response?.status === 401) {
+      if (typeof window !== "undefined") {
+        // Lado del cliente
         const { signOut } = await import("next-auth/react");
         await signOut({ redirect: false });
         window.location.href = "/auth/login";
+      } else {
+        // Lado del servidor
+        console.error("Error 401 en el servidor:", error);
       }
-      return Promise.reject(error);
     }
-  );
-} else {
-  // Interceptores del lado del servidor (si es necesario)
-  axiosInstance.interceptors.request.use(
-    (config: InternalAxiosRequestConfig) => {
-      // Aquí puedes agregar lógica específica del servidor si es necesario
-      return config;
-    },
-    (error) => Promise.reject(error)
-  );
-
-  axiosInstance.interceptors.response.use(
-    (response) => response,
-    (error) => {
-      // Manejo de errores en el servidor
-      console.error("Error en la respuesta del servidor:", error);
-      return Promise.reject(error);
-    }
-  );
-}
+    return Promise.reject(error);
+  }
+);
 
 export default axiosInstance;

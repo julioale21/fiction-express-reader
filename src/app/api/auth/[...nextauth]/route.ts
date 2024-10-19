@@ -1,11 +1,15 @@
 import axiosInstance from "@/config/axios";
-import NextAuth, { DefaultSession, User as NextAuthUser } from "next-auth";
+import NextAuth, {
+  DefaultSession,
+  User as NextAuthUser,
+  NextAuthOptions,
+} from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 interface UserWithToken extends NextAuthUser {
   token: string;
   user: {
-    id: number; // Changed from optional to required
+    id: number;
     roles: string[];
     dni: number;
     name: string;
@@ -26,7 +30,7 @@ declare module "next-auth/jwt" {
   }
 }
 
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -42,8 +46,6 @@ const handler = NextAuth({
           });
 
           const { data } = res;
-
-          console.log("data:", data);
 
           if (data && data.token) {
             const { token, ...userInfo } = data;
@@ -76,7 +78,6 @@ const handler = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      console.log("token:", token);
       session.user = token.user;
       return session;
     },
@@ -84,6 +85,8 @@ const handler = NextAuth({
   pages: {
     signIn: "/auth/login",
   },
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

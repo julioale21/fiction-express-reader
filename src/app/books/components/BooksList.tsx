@@ -51,10 +51,10 @@ const BooksList: React.FC<BookListProps> = ({ listTitle }) => {
         <Instructions show={showInstructions} setShow={toggleInstructions} />
       )}
 
-      <Grid container spacing={3} justifyContent="center">
+      <Grid  container spacing={3} justifyContent="center">
         {data?.map((book) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={book.id}>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Grid  item xs={12} sm={6} md={4} lg={3} key={book.id}>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} style={{ display: "flex", justifyContent: "center" }}>
               <BookCard book={book} />
             </motion.div>
           </Grid>

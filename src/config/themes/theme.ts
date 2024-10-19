@@ -53,7 +53,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: "Arial, sans-serif",
+    fontFamily: "var(--font-geist-sans), Roboto, Arial, sans-serif",
     h6: {
       fontWeight: 700,
       letterSpacing: "0.1em",
@@ -90,6 +90,13 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           color: "#264D5C",
+        },
+      },
+    },
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          fontFamily: "var(--font-geist-sans), Roboto, Arial, sans-serif",
         },
       },
     },

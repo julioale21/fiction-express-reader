@@ -1,23 +1,24 @@
 import { useQuery, QueryFunction, QueryKey } from "@tanstack/react-query";
 import { Book } from "@/app/books/types";
 import getQueryClient from "@/config/client/getQueryClient";
+import axiosInstance from "@/config/axios";
 
 export const getBookById = async (id: number): Promise<Book> => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BOOKS_SERVER_URL}/books/${id}`
-  );
 
-  if (!response.ok) {
-    throw new Error(`Error fetching book: ${response.statusText}`);
+  try {
+    const res = await axiosInstance.get(`/books/${id}`);
+
+    const { data } = res;
+
+    if (!data || typeof data !== "object" || !("id" in data)) {
+      throw new Error("Invalid book data received");
+    }
+
+    return data as Book;
+  } catch (error) {
+    console.error("Error fetching book:", error);
+    throw error;
   }
-
-  const data = await response.json();
-
-  if (!data || typeof data !== "object" || !("id" in data)) {
-    throw new Error("Invalid book data received");
-  }
-
-  return data as Book;
 };
 
 const queryFn: QueryFunction<Book, QueryKey> = async ({ queryKey }) => {

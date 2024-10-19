@@ -6,6 +6,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { menuItems } from "../constants/menu-items.constants";
 import theme from "@/config/themes/theme";
 import FictionExpressLogo from "./FictionExpressLogo";
+import { signOut } from "next-auth/react";
 
 interface HeaderProps {
   isMobile: boolean;
@@ -13,7 +14,7 @@ interface HeaderProps {
   title?: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ isMobile, onDrawerToggle, title }) => {
+const Header: React.FC<HeaderProps> = ({ isMobile, onDrawerToggle }) => {
   return (
     <AppBar
       position="static"
@@ -58,6 +59,13 @@ const Header: React.FC<HeaderProps> = ({ isMobile, onDrawerToggle, title }) => {
                 {item.text}
               </Button>
             ))}
+
+            <Button
+              onClick={() => signOut()}
+              sx={{ color: theme.palette.text.primary }}
+            >
+              Cerrar sesión
+            </Button>
           </Box>
         )}
       </Toolbar>
