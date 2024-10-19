@@ -1,18 +1,16 @@
 // app/book/[id]/page.tsx
 import { Suspense } from "react";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
-import {
-  prefetchBook,
-  getBookById,
-} from "@/app/books/hooks/tanstack/useQueryBookById";
+import { prefetchBook } from "@/app/books/hooks/tanstack/useQueryBookById";
 import getQueryClient from "@/config/client/getQueryClient";
 import { BookDetail } from "../components";
-import { useSession } from "next-auth/react";
+
+import { booksService } from "..";
 
 // Esta función se ejecuta en el servidor
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const id = parseInt(params.id);
-  const book = await getBookById(id);
+  const book = await booksService.getBookById(id);
   return {
     title: book.title
       ? `${book.title} - Detalle del Libro`
