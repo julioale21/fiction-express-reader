@@ -1,7 +1,7 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 import { getSession } from "next-auth/react";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"; 
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options";
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BOOKS_SERVER_URL,
@@ -32,7 +32,6 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     if (error?.response?.status === 401) {
       if (typeof window !== "undefined") {
-        // Lado del cliente
         const { signOut } = await import("next-auth/react");
         await signOut({ redirect: false });
         window.location.href = "/auth/login";

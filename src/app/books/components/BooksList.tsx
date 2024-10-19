@@ -1,18 +1,19 @@
 "use client";
 import React from "react";
-import { useBooks } from "@/app/books/hooks/tanstack/useQueryGetBooks";
+
 import { motion } from "framer-motion";
 import { Typography, Box, Grid, useTheme } from "@mui/material";
 import { BookCard, BookListError, Instructions } from ".";
 import { useInstructions } from "../hooks/useInstructions";
 import { CustomLoading } from "@/common/components";
+import { useGetBooks } from "../hooks/tanstack/useQueryGetBooks";
 
 interface BookListProps {
   listTitle: string;
 }
 
 const BooksList: React.FC<BookListProps> = ({ listTitle }) => {
-  const { data, isLoading, error } = useBooks();
+  const { data, isLoading, error } = useGetBooks();
   const { showInstructions, toggleInstructions } = useInstructions();
   const theme = useTheme();
 
@@ -51,10 +52,14 @@ const BooksList: React.FC<BookListProps> = ({ listTitle }) => {
         <Instructions show={showInstructions} setShow={toggleInstructions} />
       )}
 
-      <Grid  container spacing={3} justifyContent="center">
+      <Grid container spacing={3} justifyContent="center">
         {data?.map((book) => (
-          <Grid  item xs={12} sm={6} md={4} lg={3} key={book.id}>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} style={{ display: "flex", justifyContent: "center" }}>
+          <Grid item xs={12} sm={6} md={4} lg={3} key={book.id}>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              style={{ display: "flex", justifyContent: "center" }}
+            >
               <BookCard book={book} />
             </motion.div>
           </Grid>

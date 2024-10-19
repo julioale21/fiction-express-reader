@@ -1,19 +1,20 @@
-// app/books/page.tsx
 import React from "react";
-import { prefetchBooks } from "@/app/books/hooks/tanstack/useQueryGetBooks";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { BooksList } from "@/app/books/components";
-import getQueryClient from "@/config/client/getQueryClient";
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
+import { booksOptions } from "@/app/books/hooks/tanstack/booksOptions";
 
-const BooksListPage = async () => {
+import { BooksList } from "./components/BooksList";
+import { getQueryClient } from "@/config/client/getQueryClient";
+
+export default async function BooksListPage() {
   const queryClient = getQueryClient();
-  await prefetchBooks();
+
+  await queryClient.prefetchQuery(booksOptions);
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <BooksList listTitle="Mi Biblioteca Mágica" />
-    </HydrationBoundary>
+    <main>
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <BooksList listTitle="Mi Biblioteca Mágica" />
+      </HydrationBoundary>
+    </main>
   );
-};
-
-export default BooksListPage;
+}
