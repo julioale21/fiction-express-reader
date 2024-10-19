@@ -5,6 +5,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReadingMetricsProvider } from "@/app/books/contexts/ReadingMetricsContext";
 import { useState } from "react";
+import SessionAuthProvider from "../context/SessionAuthProvider";
 
 // Create a theme instance.
 const theme = createTheme({
@@ -35,13 +36,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme}>
-        <ReadingMetricsProvider>
-          <CssBaseline />
-          {children}
-        </ReadingMetricsProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <SessionAuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={theme}>
+          <ReadingMetricsProvider>
+            <CssBaseline />
+            {children}
+          </ReadingMetricsProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </SessionAuthProvider>
   );
 }
