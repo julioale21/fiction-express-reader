@@ -10,6 +10,6 @@ export const menuItems = [
   {
     text: "Métricas",
     icon: <BarChartIcon />,
-    href: "/books/metrics",
+    href: "/metrics",
   },
 ];
