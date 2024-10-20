@@ -10,15 +10,7 @@ export async function middleware(request: NextRequest) {
   const isPublicPath = publicPaths.includes(path);
 
   // Define las rutas que deben ser excluidas del middleware
-  const excludedPaths = [
-    "/_next",
-    "/api/auth",
-    "/public",
-    "/static",
-    "/dist",
-    "/.next",
-    "/vercel",
-  ];
+  const excludedPaths = ["/_next", "/api/auth"];
   const isExcludedPath = excludedPaths.some((excludedPath) =>
     path.startsWith(excludedPath)
   );
@@ -42,7 +34,5 @@ export async function middleware(request: NextRequest) {
 
 // Configura el matcher para incluir todas las rutas excepto las excluidas
 export const config = {
-  matcher: [
-    "/((?!api/auth|_next/static|_next/image|favicon.ico|public|static|dist|\\.next|vercel).*)",
-  ],
+  matcher: ["/((?!api/auth|_next/static|_next/image|favicon.ico).*)"],
 };
