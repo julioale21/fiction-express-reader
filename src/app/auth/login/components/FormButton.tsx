@@ -29,7 +29,7 @@ const FormButton: React.FC<FormButtonProps> = ({ isLoading }) => {
       }}
       disabled={isLoading}
     >
-      {isLoading ? <CircularProgress size={24} /> : "¡Aventura Comienza!"}
+      {isLoading ? <CircularProgress size={24} /> : "¡La Aventura Comienza!"}
     </Button>
   );
 };
