@@ -24,11 +24,12 @@ import TimerIcon from "@mui/icons-material/Timer";
 import UpdateIcon from "@mui/icons-material/Update";
 import AvgTimeIcon from "@mui/icons-material/Autorenew";
 import { Metrics } from "../../types";
+import { IconStyle } from "./MetricsTable";
 
 interface DetailsDialogProps {
   selectedMetric?: Metrics;
   handleCloseDialog: () => void;
-  iconStyle?: any;
+  iconStyle?: IconStyle;
 }
 
 const DetailsDialog: React.FC<DetailsDialogProps> = ({

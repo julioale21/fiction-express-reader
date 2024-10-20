@@ -9,7 +9,6 @@ import theme from "@/config/themes/theme";
 import FictionExpressLogo from "./FictionExpressLogo";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 interface HeaderProps {
   isMobile: boolean;
@@ -18,7 +17,6 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ isMobile, onDrawerToggle }) => {
-  const router = useRouter();
 
   const handleSignOut = () => {
     signOut();

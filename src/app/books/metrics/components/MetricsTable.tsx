@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import {
   Table,
@@ -21,8 +22,12 @@ import TimerIcon from "@mui/icons-material/Timer";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import LastPageIcon from "@mui/icons-material/LastPage";
 import UpdateIcon from "@mui/icons-material/Update";
-import AvgTimeIcon from "@mui/icons-material/Autorenew";
 import { DetailsDialog } from "./DetailsDialog";
+
+export interface IconStyle {
+  verticalAlign: string;
+  marginRight: string;
+}
 
 const MetricsTable = () => {
   const { getAllMetrics } = useMetrics();
@@ -37,7 +42,7 @@ const MetricsTable = () => {
     fontWeight: "bold",
   };
 
-  const iconStyle = {
+  const iconStyle: IconStyle = {
     verticalAlign: "middle",
     marginRight: theme.spacing(1),
   };
