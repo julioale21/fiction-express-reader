@@ -10,7 +10,6 @@ import {
   Grid,
   Paper,
   Divider,
-  useTheme,
 } from "@mui/material";
 import Link from "next/link";
 import { Metrics } from "../types";
@@ -26,6 +25,7 @@ import {
   formatTime,
   formatDate,
 } from "@/utils/metrics";
+import theme from "@/config/themes/theme";
 
 interface DialogMetricsProps {
   showMetrics: boolean;
@@ -36,8 +36,6 @@ const DialogMetrics: React.FC<DialogMetricsProps> = ({
   showMetrics,
   finalMetrics,
 }) => {
-  const theme = useTheme();
-
   if (!finalMetrics) return null;
 
   const totalReadingTime = calculateTotalReadingTime(finalMetrics);

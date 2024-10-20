@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Book, Metrics } from "../types";
 import { useMetrics } from "../contexts/ReadingMetricsContext";
 
@@ -77,7 +77,7 @@ const useReadingMetrics = ({
       if (metrics) {
         saveMetrics(metrics);
       }
-    }, 30000); 
+    }, 30000);
 
     return () => clearInterval(saveInterval);
   }, [metrics, saveMetrics]);
