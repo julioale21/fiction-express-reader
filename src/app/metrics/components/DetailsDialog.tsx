@@ -23,8 +23,9 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import TimerIcon from "@mui/icons-material/Timer";
 import UpdateIcon from "@mui/icons-material/Update";
 import AvgTimeIcon from "@mui/icons-material/Autorenew";
-import { Metrics } from "../../types";
+
 import { IconStyle } from "./MetricsTable";
+import { Metrics } from "@/app/books/types";
 
 interface DetailsDialogProps {
   selectedMetric?: Metrics;

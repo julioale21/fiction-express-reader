@@ -14,8 +14,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { formatDuration } from "@/utils/metrics";
-import { useMetrics } from "../../contexts/ReadingMetricsContext";
-import { Metrics } from "../../types";
+
 import BookIcon from "@mui/icons-material/Book";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import TimerIcon from "@mui/icons-material/Timer";
@@ -23,6 +22,8 @@ import MenuBookIcon from "@mui/icons-material/MenuBook";
 import LastPageIcon from "@mui/icons-material/LastPage";
 import UpdateIcon from "@mui/icons-material/Update";
 import { DetailsDialog } from "./DetailsDialog";
+import { useMetrics } from "@/app/books/contexts/ReadingMetricsContext";
+import { Metrics } from "@/app/books/types";
 
 export interface IconStyle {
   verticalAlign: string;
