@@ -40,20 +40,20 @@ Incorporé animaciones Lottie y Motion para mostrar cómo se pueden crear interf
 ├── docs                 # Documentación para el README
 ├── public               # Archivos estáticos
 ├── src
-    ├── animations               
+    ├── animations
     ├── app              # Sistema de rutas de Next.js
         ├── api            # Configuración de NextAuth
         ├── auth            # vistas y componentes de la autenticación
         ├── books
             ├── [id]         # Ruta dinámica para detalles del libro
             ├── components   # Componentes específicos
-            ├── contexts     # Contextos 
-            ├── hooks        # Custom hooks y React Query hooks 
+            ├── contexts     # Contextos
+            ├── hooks        # Custom hooks y React Query hooks
             ├── types        # Interfaces y tipos
         ├── metrics            # Componentes y vistas para manejar las métricas
         ├── common         # Componentes y utilidades compartidas
-        ├── config         # Configuraciones 
-        ├── constants      
+        ├── config         # Configuraciones
+        ├── constants
         ├── infrastructure # Datos mock para simular backend
         ├── utils
         - middleware      # protección de rutas

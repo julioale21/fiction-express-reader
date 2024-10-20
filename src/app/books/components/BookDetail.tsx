@@ -20,6 +20,7 @@ import { CustomLoading } from "@/common/components";
 import { FinishBookCelebration } from "./FinishBookCelebration";
 import { DialogMetrics } from "./DialogMetrics";
 import { useReadingMetrics } from "../hooks/useReadingMetrics";
+import { formatTime } from "@/utils/metrics";
 
 interface BookDetailProps {
   bookId: number;
@@ -127,7 +128,6 @@ const BookDetail: React.FC<BookDetailProps> = ({ bookId }) => {
                   >
                     {book.chapters[currentChapter].pages[currentPage]}
                   </Typography>
-
                 </Box>
               ) : (
                 <Typography
@@ -177,7 +177,7 @@ const BookDetail: React.FC<BookDetailProps> = ({ bookId }) => {
 
         <Box sx={{ mt: 2 }}>
           <Typography variant="body2">
-            Tiempo en esta página: {currentPageTime}
+            Tiempo en esta página: {formatTime(currentPageTime)}
           </Typography>
         </Box>
       </Paper>
