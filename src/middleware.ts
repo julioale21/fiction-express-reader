@@ -15,13 +15,18 @@ export async function middleware(request: NextRequest) {
     path.startsWith(excludedDirectory)
   );
 
+  // Add a specific check for /books/metrics
+  const isProtectedMetricsPath = path.startsWith("/books/metrics");
+
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  if (!isPublicPath && !isExcludedDirectory && !token) {
-    return NextResponse.redirect(new URL("/auth/login", request.url));
+  if ((!isPublicPath && !isExcludedDirectory) || isProtectedMetricsPath) {
+    if (!token) {
+      return NextResponse.redirect(new URL("/auth/login", request.url));
+    }
   }
 
   return NextResponse.next();
@@ -30,5 +35,6 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/((?!_next|public|auth|login|register).*)",
+    "/books/metrics",  
   ],
 };
