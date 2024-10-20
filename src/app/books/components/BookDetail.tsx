@@ -19,7 +19,7 @@ import { BookError } from "./BookError";
 import { CustomLoading } from "@/common/components";
 import { FinishBookCelebration } from "./FinishBookCelebration";
 import { DialogMetrics } from "./DialogMetrics";
-import { useReadingMetrics } from "../hooks/useReadingMetrics";
+import { useReadingMetrics } from "../../metrics/hooks/useReadingMetrics";
 import { formatTime } from "@/utils/metrics";
 
 interface BookDetailProps {

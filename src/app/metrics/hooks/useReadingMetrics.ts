@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Book, Metrics } from "../types";
-import { useMetrics } from "../contexts/ReadingMetricsContext";
+import { Book, Metrics } from "../../books/types";
+import { useMetrics } from "../../books/contexts/ReadingMetricsContext";
 
 interface ReadingMetricsProps {
   book?: Book;
@@ -69,6 +69,7 @@ const useReadingMetrics = ({
     });
 
     setCurrentPageTime(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPageNumber, saveMetrics]);
 
   // Cuando se actualizan las metricas se persisten en el storage

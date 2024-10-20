@@ -4,7 +4,7 @@ import theme from "@/config/themes/theme";
 import {
   formatDuration,
   calculateAverageTimePerPage,
-  formatTime,
+  formatDate,
 } from "@/utils/metrics";
 import {
   Dialog,
@@ -97,7 +97,7 @@ const DetailsDialog: React.FC<DetailsDialogProps> = ({
                     />
                     <Typography component="span">Inicio: </Typography>
                     <Typography component="span" fontWeight="bold">
-                      {formatTime(selectedMetric.startTime || 0)}
+                      {formatDate(selectedMetric.startTime || 0)}
                     </Typography>
                   </Box>
                   <Box>
@@ -106,7 +106,7 @@ const DetailsDialog: React.FC<DetailsDialogProps> = ({
                     />
                     <Typography component="span">Última lectura: </Typography>
                     <Typography component="span" fontWeight="bold">
-                      {formatTime(selectedMetric.lastPageTimestamp || 0)}
+                      {formatDate(selectedMetric.lastPageTimestamp || 0)}
                     </Typography>
                   </Box>
                 </Paper>
