@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -19,14 +19,15 @@ import { BookError } from "./BookError";
 import { CustomLoading } from "@/common/components";
 import { FinishBookCelebration } from "./FinishBookCelebration";
 import { DialogMetrics } from "./DialogMetrics";
+import { useReadingMetrics } from "../hooks/useReadingMetrics";
 
-export interface Metrics {
-  bookId: number | null;
-  startTime: number | null;
-  totalTime: number;
-  pageReadingTimes: { [pageChapterKey: string]: number };
-  lastPageTimestamp: number | null;
-}
+// export interface Metrics {
+//   bookId: number | null;
+//   startTime: number | null;
+//   totalTime: number;
+//   pageReadingTimes: { [pageChapterKey: string]: number };
+//   lastPageTimestamp: number | null;
+// }
 
 interface BookDetailProps {
   bookId: number;
@@ -46,90 +47,22 @@ const BookDetail: React.FC<BookDetailProps> = ({ bookId }) => {
     prevPage,
   } = useBookNavigation(bookId);
 
-  const [metrics, setMetrics] = useState<Metrics>({
-    bookId: null,
-    startTime: null,
-    totalTime: 0,
-    pageReadingTimes: {},
-    lastPageTimestamp: null,
+  const { metrics, handleFinish, currentPageTime } = useReadingMetrics({
+    book,
+    currentPageNumber,
   });
-  const [currentPageTime, setCurrentPageTime] = useState(0);
-  const [finishedReading, setFinishedReading] = useState(false);
-  const [showCelebration, setShowCelebration] = useState(false);
-  const [showMetrics, setShowMetrics] = useState(false);
 
-  const startReading = (bookId: number) => {
-    setCurrentPageTime(0);
-
-    setMetrics({
-      bookId,
-      startTime: Date.now(),
-      totalTime: 0,
-      pageReadingTimes: {},
-      lastPageTimestamp: Date.now(),
-    });
-  };
-
-  useEffect(() => {
-    setCurrentPageTime(0);
-
-    if (finishedReading) {
-      return;
-    }
-
-    const intervalId = setInterval(() => {
-      setCurrentPageTime((prevTime) => prevTime + 1);
-    }, 1000);
-
-    return () => clearInterval(intervalId);
-  }, [currentPageNumber, finishedReading]);
-
-  useEffect(() => {
-    startReading(book?.id || 0);
-  }, [book]);
-
-  useEffect(() => {
-    console.log(metrics);
-  }, [metrics]);
-
-  useEffect(() => {
-    if (currentPageNumber > 1) {
-      if (currentPageTime > 0) {
-        setMetrics((prevMetrics) => ({
-          ...prevMetrics,
-          totalTime: prevMetrics.totalTime + currentPageTime,
-          pageReadingTimes: {
-            ...prevMetrics.pageReadingTimes,
-            [currentPageNumber - 1]: currentPageTime,
-          },
-          lastPageTimestamp: Date.now(),
-        }));
-      }
-
-      setCurrentPageTime(0);
-    }
-  }, [currentPageNumber]);
-
-  const handleFinish = () => {
-    console.log({ currentPageNumber });
-
-    // const pageChapterKey = `${currentChapter}-${currentPageNumber}`;
-
-    setMetrics((prevMetrics) => ({
-      ...prevMetrics,
-      totalTime: prevMetrics.totalTime + currentPageTime,
-      pageReadingTimes: {
-        ...prevMetrics.pageReadingTimes,
-        [currentPageNumber]: currentPageTime,
-      },
-    }));
-    setFinishedReading(true);
+  const onFinishReading = () => {
+    handleFinish();
     setShowCelebration(true);
 
     setTimeout(() => {
       setShowMetrics(true);
     }, 3000);
   };
+
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [showMetrics, setShowMetrics] = useState(false);
 
   if (isLoading) return <CustomLoading text="Cargando tu libro ..." />;
 
@@ -203,12 +136,6 @@ const BookDetail: React.FC<BookDetailProps> = ({ bookId }) => {
                     {book.chapters[currentChapter].pages[currentPage]}
                   </Typography>
 
-                  <Typography
-                    variant="body1"
-                    sx={{ fontSize: "1.2rem", lineHeight: 1.6 }}
-                  >
-                    {book.chapters[currentChapter].pages[currentPage]}
-                  </Typography>
                 </Box>
               ) : (
                 <Typography
@@ -242,7 +169,11 @@ const BookDetail: React.FC<BookDetailProps> = ({ bookId }) => {
             Página {currentPageNumber} de {totalPages}
           </Typography>
           {isLastPage ? (
-            <Button variant="contained" color="primary" onClick={handleFinish}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={onFinishReading}
+            >
               Finalizar
             </Button>
           ) : (

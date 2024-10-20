@@ -1,5 +1,132 @@
+// import React from "react";
+// import { formatTimeFunction } from "@/utils/time";
+// import {
+//   Dialog,
+//   DialogTitle,
+//   DialogContent,
+//   Typography,
+//   DialogActions,
+//   Button,
+// } from "@mui/material";
+// import Link from "next/link";
+// import { Metrics } from "../types";
+
+// const formatTime = (timeInSeconds: number): string => {
+//   if (timeInSeconds >= 3600) {
+//     // Si el tiempo es mayor o igual a 3600 segundos (1 hora), mostrar en horas
+//     const hours = Math.floor(timeInSeconds / 3600);
+//     const minutes = Math.floor((timeInSeconds % 3600) / 60);
+//     return `${hours}h ${minutes}min`;
+//   } else if (timeInSeconds >= 60) {
+//     // Si el tiempo es mayor o igual a 60 segundos, mostrar en minutos
+//     const minutes = Math.floor(timeInSeconds / 60);
+//     const seconds = timeInSeconds % 60;
+//     return `${minutes}min ${seconds}s`;
+//   } else {
+//     // Si el tiempo es menor a 60 segundos, mostrar en segundos
+//     return `${timeInSeconds}s`;
+//   }
+// };
+
+// interface DialogMetricsProps {
+//   showMetrics: boolean;
+//   finalMetrics: Metrics | null;
+// }
+
+// const DialogMetrics: React.FC<DialogMetricsProps> = ({
+//   showMetrics,
+//   finalMetrics,
+// }) => {
+//   const totalReadingTime = finalMetrics?.pageReadingTimes
+//     ? Object.values(finalMetrics.pageReadingTimes).reduce(
+//         (acc: number, time: number) => acc + time,
+//         0
+//       )
+//     : 0;
+
+//   const averageTimePerPage = finalMetrics?.pageReadingTimes
+//     ? Object.values(finalMetrics.pageReadingTimes).reduce(
+//         (acc: number, time: number) => acc + time,
+//         0
+//       ) / Object.keys(finalMetrics.pageReadingTimes).length
+//     : 0;
+
+//   return (
+//     <Dialog open={showMetrics} onClose={() => {}}>
+//       <DialogTitle>Métricas de Lectura</DialogTitle>
+//       <DialogContent>
+//         {finalMetrics && (
+//           <>
+//             {/* Mostrar tiempo total de lectura */}
+//             <Typography>
+//               Tiempo total de lectura: {formatTime(totalReadingTime)}
+//             </Typography>
+
+//             {/* Mostrar tiempo promedio por página */}
+//             <Typography>
+//               Tiempo promedio por página: {formatTime(averageTimePerPage)}
+//             </Typography>
+
+//             {/* Convertir y mostrar startTime y lastPageTimestamp */}
+//             <Typography>
+//               Hora de inicio:{" "}
+//               {finalMetrics.startTime
+//                 ? new Date(finalMetrics.startTime).toLocaleString("es-ES", {
+//                     year: "numeric",
+//                     month: "long",
+//                     day: "numeric",
+//                     hour: "2-digit",
+//                     minute: "2-digit",
+//                     second: "2-digit",
+//                   })
+//                 : "No disponible"}
+//             </Typography>
+//             <Typography>
+//               Última página leída:{" "}
+//               {finalMetrics.lastPageTimestamp
+//                 ? new Date(finalMetrics.lastPageTimestamp).toLocaleString(
+//                     "es-ES",
+//                     {
+//                       year: "numeric",
+//                       month: "long",
+//                       day: "numeric",
+//                       hour: "2-digit",
+//                       minute: "2-digit",
+//                       second: "2-digit",
+//                     }
+//                   )
+//                 : "No disponible"}
+//             </Typography>
+
+//             {/* Mostrar tiempos por página */}
+//             <Typography variant="h6" sx={{ mt: 2 }}>
+//               Tiempo por página:
+//             </Typography>
+//             {Object.entries(finalMetrics.pageReadingTimes).map(
+//               ([pageNumber, time]) => {
+//                 return (
+//                   <Typography key={pageNumber}>
+//                     Página {parseInt(pageNumber)}: {formatTime(time)}{" "}
+//                   </Typography>
+//                 );
+//               }
+//             )}
+//           </>
+//         )}
+//       </DialogContent>
+
+//       {/* Acciones del diálogo */}
+//       <DialogActions>
+//         <Link href="/books">
+//           <Button>Cerrar</Button>
+//         </Link>
+//       </DialogActions>
+//     </Dialog>
+//   );
+// };
+
+// export { DialogMetrics };
 import React from "react";
-import { formatTimeFunction } from "@/utils/time";
 import {
   Dialog,
   DialogTitle,
@@ -7,26 +134,26 @@ import {
   Typography,
   DialogActions,
   Button,
+  Box,
+  Grid,
+  Paper,
+  Divider,
+  useTheme,
 } from "@mui/material";
 import Link from "next/link";
-import { Metrics } from "./BookDetail";
+import { Metrics } from "../types";
 
-const formatTime = (timeInSeconds: number): string => {
-  if (timeInSeconds >= 3600) {
-    // Si el tiempo es mayor o igual a 3600 segundos (1 hora), mostrar en horas
-    const hours = Math.floor(timeInSeconds / 3600);
-    const minutes = Math.floor((timeInSeconds % 3600) / 60);
-    return `${hours}h ${minutes}min`;
-  } else if (timeInSeconds >= 60) {
-    // Si el tiempo es mayor o igual a 60 segundos, mostrar en minutos
-    const minutes = Math.floor(timeInSeconds / 60);
-    const seconds = timeInSeconds % 60;
-    return `${minutes}min ${seconds}s`;
-  } else {
-    // Si el tiempo es menor a 60 segundos, mostrar en segundos
-    return `${timeInSeconds}s`;
-  }
-};
+import TimerIcon from "@mui/icons-material/Timer";
+import AvgTimeIcon from "@mui/icons-material/Autorenew";
+import StartTimeIcon from "@mui/icons-material/PlayArrow";
+import EndTimeIcon from "@mui/icons-material/Stop";
+import BookIcon from "@mui/icons-material/MenuBook";
+import {
+  calculateTotalReadingTime,
+  calculateAverageTimePerPage,
+  formatTime,
+  formatDate,
+} from "@/utils/metrics";
 
 interface DialogMetricsProps {
   showMetrics: boolean;
@@ -37,88 +164,222 @@ const DialogMetrics: React.FC<DialogMetricsProps> = ({
   showMetrics,
   finalMetrics,
 }) => {
-  const totalReadingTime = finalMetrics?.pageReadingTimes
-    ? Object.values(finalMetrics.pageReadingTimes).reduce(
-        (acc: number, time: number) => acc + time,
-        0
-      )
-    : 0;
+  const theme = useTheme();
 
-  const averageTimePerPage = finalMetrics?.pageReadingTimes
-    ? Object.values(finalMetrics.pageReadingTimes).reduce(
-        (acc: number, time: number) => acc + time,
-        0
-      ) / Object.keys(finalMetrics.pageReadingTimes).length
-    : 0;
+  if (!finalMetrics) return null;
+
+  const totalReadingTime = calculateTotalReadingTime(finalMetrics);
+  const averageTimePerPage = calculateAverageTimePerPage(finalMetrics);
 
   return (
-    <Dialog open={showMetrics} onClose={() => {}}>
-      <DialogTitle>Métricas de Lectura</DialogTitle>
+    <Dialog
+      open={showMetrics}
+      onClose={() => {}}
+      maxWidth="md"
+      fullWidth
+      PaperProps={{
+        style: {
+          backgroundColor: theme.palette.background.default,
+          borderRadius: 16,
+        },
+      }}
+    >
+      <DialogTitle>
+        <Typography
+          variant="h4"
+          align="center"
+          gutterBottom
+          sx={{ color: theme.palette.primary.main, fontWeight: "bold" }}
+        >
+          <BookIcon
+            sx={{ fontSize: 40, verticalAlign: "middle", marginRight: 1 }}
+          />
+          Resumen de Lectura
+        </Typography>
+      </DialogTitle>
       <DialogContent>
-        {finalMetrics && (
-          <>
-            {/* Mostrar tiempo total de lectura */}
-            <Typography>
-              Tiempo total de lectura: {formatTime(totalReadingTime)}
-            </Typography>
-
-            {/* Mostrar tiempo promedio por página */}
-            <Typography>
-              Tiempo promedio por página: {formatTime(averageTimePerPage)}
-            </Typography>
-
-            {/* Convertir y mostrar startTime y lastPageTimestamp */}
-            <Typography>
-              Hora de inicio:{" "}
-              {finalMetrics.startTime
-                ? new Date(finalMetrics.startTime).toLocaleString("es-ES", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                  })
-                : "No disponible"}
-            </Typography>
-            <Typography>
-              Última página leída:{" "}
-              {finalMetrics.lastPageTimestamp
-                ? new Date(finalMetrics.lastPageTimestamp).toLocaleString(
-                    "es-ES",
-                    {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                    }
-                  )
-                : "No disponible"}
-            </Typography>
-
-            {/* Mostrar tiempos por página */}
-            <Typography variant="h6" sx={{ mt: 2 }}>
-              Tiempo por página:
-            </Typography>
-            {Object.entries(finalMetrics.pageReadingTimes).map(
-              ([pageNumber, time]) => {
-                return (
-                  <Typography key={pageNumber}>
-                    Página {parseInt(pageNumber)}: {formatTime(time)}{" "}
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <Paper
+              elevation={3}
+              sx={{
+                p: 3,
+                height: "100%",
+                borderRadius: 2,
+                backgroundColor: theme.palette.background.paper,
+              }}
+            >
+              <Typography
+                variant="h6"
+                gutterBottom
+                sx={{ color: theme.palette.secondary.main, fontWeight: "bold" }}
+              >
+                Estadísticas Generales
+              </Typography>
+              <Box sx={{ mb: 3, display: "flex", alignItems: "center" }}>
+                <TimerIcon
+                  sx={{
+                    fontSize: 30,
+                    marginRight: 2,
+                    color: theme.palette.primary.main,
+                  }}
+                />
+                <Box>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ color: theme.palette.text.secondary }}
+                  >
+                    Tiempo total de lectura:
                   </Typography>
-                );
-              }
-            )}
-          </>
-        )}
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      color: theme.palette.primary.main,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {formatTime(totalReadingTime)}
+                  </Typography>
+                </Box>
+              </Box>
+              <Box sx={{ mb: 3, display: "flex", alignItems: "center" }}>
+                <AvgTimeIcon
+                  sx={{
+                    fontSize: 30,
+                    marginRight: 2,
+                    color: theme.palette.secondary.main,
+                  }}
+                />
+                <Box>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ color: theme.palette.text.secondary }}
+                  >
+                    Tiempo promedio por página:
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      color: theme.palette.secondary.main,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {formatTime(Number(averageTimePerPage.toFixed(2)))}
+                  </Typography>
+                </Box>
+              </Box>
+              <Divider sx={{ my: 2 }} />
+              <Box sx={{ mb: 2, display: "flex", alignItems: "center" }}>
+                <StartTimeIcon
+                  sx={{
+                    fontSize: 24,
+                    marginRight: 2,
+                    color: theme.palette.success.main,
+                  }}
+                />
+                <Box>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ color: theme.palette.text.secondary }}
+                  >
+                    Hora de inicio:
+                  </Typography>
+                  <Typography sx={{ color: theme.palette.text.primary }}>
+                    {formatDate(finalMetrics.startTime)}
+                  </Typography>
+                </Box>
+              </Box>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <EndTimeIcon
+                  sx={{
+                    fontSize: 24,
+                    marginRight: 2,
+                    color: theme.palette.error.main,
+                  }}
+                />
+                <Box>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ color: theme.palette.text.secondary }}
+                  >
+                    Última página leída:
+                  </Typography>
+                  <Typography sx={{ color: theme.palette.text.primary }}>
+                    {formatDate(finalMetrics.lastPageTimestamp)}
+                  </Typography>
+                </Box>
+              </Box>
+            </Paper>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Paper
+              elevation={3}
+              sx={{
+                p: 3,
+                height: "100%",
+                maxHeight: 400,
+                overflow: "auto",
+                borderRadius: 2,
+                backgroundColor: theme.palette.background.paper,
+              }}
+            >
+              <Typography
+                variant="h6"
+                gutterBottom
+                sx={{ color: theme.palette.secondary.main, fontWeight: "bold" }}
+              >
+                Tiempo por Página
+              </Typography>
+              {Object.entries(finalMetrics.pageReadingTimes).map(
+                ([pageNumber, time]) => (
+                  <Box
+                    key={pageNumber}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      mb: 1,
+                      p: 1,
+                      borderRadius: 1,
+                      "&:hover": {
+                        backgroundColor: theme.palette.action.hover,
+                      },
+                    }}
+                  >
+                    <Typography sx={{ color: theme.palette.text.primary }}>
+                      Página {parseInt(pageNumber)}:
+                    </Typography>
+                    <Typography
+                      sx={{
+                        color: theme.palette.primary.main,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {formatTime(time)}
+                    </Typography>
+                  </Box>
+                )
+              )}
+            </Paper>
+          </Grid>
+        </Grid>
       </DialogContent>
-
-      {/* Acciones del diálogo */}
-      <DialogActions>
-        <Link href="/books">
-          <Button>Cerrar</Button>
+      <DialogActions sx={{ justifyContent: "center", p: 3 }}>
+        <Link href="/books" passHref>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            startIcon={<BookIcon />}
+            sx={{
+              borderRadius: 20,
+              padding: "10px 30px",
+              fontWeight: "bold",
+              textTransform: "none",
+              boxShadow: theme.shadows[3],
+            }}
+          >
+            Volver a la Biblioteca
+          </Button>
         </Link>
       </DialogActions>
     </Dialog>

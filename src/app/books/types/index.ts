@@ -17,3 +17,11 @@ export interface ReadingMetrics {
   startTime: number | null;
   currentPage: number;
 }
+
+export interface Metrics {
+  bookId: number | null;
+  startTime: number | null;
+  totalTime: number;
+  pageReadingTimes: { [pageChapterKey: string]: number };
+  lastPageTimestamp: number | null;
+}

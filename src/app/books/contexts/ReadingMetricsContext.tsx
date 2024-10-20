@@ -1,111 +1,50 @@
-// src/app/books/contexts/ReadingMetricsContext.tsx
+import React, { createContext, useContext, useCallback } from "react";
+import { Metrics } from "../types";
 
-import React, { createContext, useContext, useState, useCallback } from "react";
-
-interface ReadingMetrics {
-  bookId: number | null;
-  startTime: number | null;
-  totalTime: number;
-  pageReadingTimes: { [pageId: number]: number };
-  lastPageTimestamp: number | null;
+interface MetricsContextType {
+  getMetrics: (bookId: number) => Metrics | null;
+  saveMetrics: (metrics: Metrics) => void;
+  clearMetrics: (bookId: number) => void;
 }
 
-interface ReadingMetricsContextType {
-  metrics: ReadingMetrics;
-  startReading: (bookId: number) => void;
-  updatePageTime: (pageId: number) => void;
-  finishReading: () => {
-    totalTime: number;
-    averageTimePerPage: number;
-    pageReadingTimes: { [pageId: number]: number };
-  };
-  getPageReadingTime: (pageId: number) => number;
-}
+const MetricsContext = createContext<MetricsContextType | undefined>(undefined);
 
-const ReadingMetricsContext = createContext<
-  ReadingMetricsContextType | undefined
->(undefined);
-
-export const useReadingMetrics = () => {
-  const context = useContext(ReadingMetricsContext);
+export const useMetrics = () => {
+  const context = useContext(MetricsContext);
   if (!context) {
-    throw new Error(
-      "useReadingMetrics must be used within a ReadingMetricsProvider"
-    );
+    throw new Error("useMetrics must be used within a MetricsProvider");
   }
   return context;
 };
 
-export const ReadingMetricsProvider: React.FC<{
-  children: React.ReactNode;
-}> = ({ children }) => {
-  const [metrics, setMetrics] = useState<ReadingMetrics>({
-    bookId: null,
-    startTime: null,
-    totalTime: 0,
-    pageReadingTimes: {},
-    lastPageTimestamp: null,
-  });
-
-  const startReading = useCallback((bookId: number) => {
-    setMetrics({
-      bookId,
-      startTime: Date.now(),
-      totalTime: 0,
-      pageReadingTimes: {},
-      lastPageTimestamp: Date.now(),
-    });
+export const MetricsProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const getMetrics = useCallback((bookId: number): Metrics | null => {
+    const metricsString = localStorage.getItem(`book_metrics_${bookId}`);
+    return metricsString ? JSON.parse(metricsString) : null;
   }, []);
 
-  const updatePageTime = useCallback((pageId: number) => {
-    setMetrics((prevMetrics) => {
-      const now = Date.now();
-      const pageTime = prevMetrics.lastPageTimestamp
-        ? now - prevMetrics.lastPageTimestamp
-        : 0;
-
-      return {
-        ...prevMetrics,
-        totalTime: prevMetrics.totalTime + pageTime,
-        pageReadingTimes: {
-          ...prevMetrics.pageReadingTimes,
-          [pageId]: (prevMetrics.pageReadingTimes[pageId] || 0) + pageTime,
-        },
-        lastPageTimestamp: now,
-      };
-    });
+  const saveMetrics = useCallback((metrics: Metrics) => {
+    localStorage.setItem(
+      `book_metrics_${metrics.bookId}`,
+      JSON.stringify(metrics)
+    );
   }, []);
 
-  const finishReading = useCallback(() => {
-    const totalPages = Object.keys(metrics.pageReadingTimes).length;
-    const averageTimePerPage =
-      totalPages > 0 ? metrics.totalTime / totalPages : 0;
-
-    return {
-      totalTime: metrics.totalTime,
-      averageTimePerPage,
-      pageReadingTimes: metrics.pageReadingTimes,
-    };
-  }, [metrics]);
-
-  const getPageReadingTime = useCallback(
-    (pageId: number) => {
-      return metrics.pageReadingTimes[pageId] || 0;
-    },
-    [metrics.pageReadingTimes]
-  );
+  const clearMetrics = useCallback((bookId: number) => {
+    localStorage.removeItem(`book_metrics_${bookId}`);
+  }, []);
 
   return (
-    <ReadingMetricsContext.Provider
+    <MetricsContext.Provider
       value={{
-        metrics,
-        startReading,
-        updatePageTime,
-        finishReading,
-        getPageReadingTime,
+        getMetrics,
+        saveMetrics,
+        clearMetrics,
       }}
     >
       {children}
-    </ReadingMetricsContext.Provider>
+    </MetricsContext.Provider>
   );
 };
