@@ -41,6 +41,7 @@ const useLoginForm = () => {
     setIsLoading(false);
 
     if (result?.error) {
+      console.error(result.error);
       setError("Algo salio mal, revisa tus credenciales");
     } else if (result?.ok) {
       router.push("/books");
