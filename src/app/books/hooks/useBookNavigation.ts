@@ -46,6 +46,7 @@ const useBookNavigation = (bookId: number): BookNavigationHook => {
   );
 
   const nextPage = () => {
+    console.log({currentPage});
     if (book && currentPage < book.chapters[currentChapter].pages.length - 1) {
       setCurrentPage(currentPage + 1);
     } else if (book && currentChapter < book.chapters.length - 1) {

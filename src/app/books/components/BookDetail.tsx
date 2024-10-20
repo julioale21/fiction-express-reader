@@ -14,12 +14,19 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import { useBookNavigation } from "../hooks/useBookNavigation";
-import { useReadingMetricsHook } from "../hooks/useReadingMetricsHook";
-import { formatTimeFunction } from "@/utils/time";
-import { DialogMetrics } from "./DialogMetrics";
+
 import { BookError } from "./BookError";
 import { CustomLoading } from "@/common/components";
 import { FinishBookCelebration } from "./FinishBookCelebration";
+import { DialogMetrics } from "./DialogMetrics";
+
+export interface Metrics {
+  bookId: number | null;
+  startTime: number | null;
+  totalTime: number;
+  pageReadingTimes: { [pageChapterKey: string]: number };
+  lastPageTimestamp: number | null;
+}
 
 interface BookDetailProps {
   bookId: number;
@@ -39,41 +46,89 @@ const BookDetail: React.FC<BookDetailProps> = ({ bookId }) => {
     prevPage,
   } = useBookNavigation(bookId);
 
-  const {
-    startReading,
-    updatePageTime,
-    finishReading,
-    getPageReadingTime,
-    showMetrics,
-    setShowMetrics,
-    finalMetrics,
-    setFinalMetrics,
-  } = useReadingMetricsHook();
-
+  const [metrics, setMetrics] = useState<Metrics>({
+    bookId: null,
+    startTime: null,
+    totalTime: 0,
+    pageReadingTimes: {},
+    lastPageTimestamp: null,
+  });
+  const [currentPageTime, setCurrentPageTime] = useState(0);
+  const [finishedReading, setFinishedReading] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [showMetrics, setShowMetrics] = useState(false);
+
+  const startReading = (bookId: number) => {
+    setCurrentPageTime(0);
+
+    setMetrics({
+      bookId,
+      startTime: Date.now(),
+      totalTime: 0,
+      pageReadingTimes: {},
+      lastPageTimestamp: Date.now(),
+    });
+  };
 
   useEffect(() => {
-    if (book) {
-      startReading(bookId);
+    setCurrentPageTime(0);
+
+    if (finishedReading) {
+      return;
     }
-  }, [book, bookId, startReading]);
+
+    const intervalId = setInterval(() => {
+      setCurrentPageTime((prevTime) => prevTime + 1);
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [currentPageNumber, finishedReading]);
 
   useEffect(() => {
-    if (book) {
-      const pageId = currentChapter * 100 + currentPage;
-      updatePageTime(pageId);
+    startReading(book?.id || 0);
+  }, [book]);
+
+  useEffect(() => {
+    console.log(metrics);
+  }, [metrics]);
+
+  useEffect(() => {
+    if (currentPageNumber > 1) {
+      if (currentPageTime > 0) {
+        setMetrics((prevMetrics) => ({
+          ...prevMetrics,
+          totalTime: prevMetrics.totalTime + currentPageTime,
+          pageReadingTimes: {
+            ...prevMetrics.pageReadingTimes,
+            [currentPageNumber - 1]: currentPageTime,
+          },
+          lastPageTimestamp: Date.now(),
+        }));
+      }
+
+      setCurrentPageTime(0);
     }
-  }, [book, currentChapter, currentPage, updatePageTime]);
+  }, [currentPageNumber]);
 
   const handleFinish = () => {
+    console.log({ currentPageNumber });
+
+    // const pageChapterKey = `${currentChapter}-${currentPageNumber}`;
+
+    setMetrics((prevMetrics) => ({
+      ...prevMetrics,
+      totalTime: prevMetrics.totalTime + currentPageTime,
+      pageReadingTimes: {
+        ...prevMetrics.pageReadingTimes,
+        [currentPageNumber]: currentPageTime,
+      },
+    }));
+    setFinishedReading(true);
     setShowCelebration(true);
 
     setTimeout(() => {
-      setShowCelebration(false);
-      const metrics = finishReading();
-      setFinalMetrics(metrics);
       setShowMetrics(true);
-    }, 5000);
+    }, 3000);
   };
 
   if (isLoading) return <CustomLoading text="Cargando tu libro ..." />;
@@ -140,6 +195,20 @@ const BookDetail: React.FC<BookDetailProps> = ({ bookId }) => {
                   >
                     {book.chapters[currentChapter].title}
                   </Typography>
+
+                  <Typography
+                    variant="body1"
+                    sx={{ fontSize: "1.2rem", lineHeight: 1.6 }}
+                  >
+                    {book.chapters[currentChapter].pages[currentPage]}
+                  </Typography>
+
+                  <Typography
+                    variant="body1"
+                    sx={{ fontSize: "1.2rem", lineHeight: 1.6 }}
+                  >
+                    {book.chapters[currentChapter].pages[currentPage]}
+                  </Typography>
                 </Box>
               ) : (
                 <Typography
@@ -185,15 +254,12 @@ const BookDetail: React.FC<BookDetailProps> = ({ bookId }) => {
 
         <Box sx={{ mt: 2 }}>
           <Typography variant="body2">
-            Tiempo en esta página:{" "}
-            {formatTimeFunction(
-              getPageReadingTime(currentChapter * 100 + currentPage)
-            )}
+            Tiempo en esta página: {currentPageTime}
           </Typography>
         </Box>
       </Paper>
 
-      <DialogMetrics showMetrics={showMetrics} finalMetrics={finalMetrics} />
+      <DialogMetrics showMetrics={showMetrics} finalMetrics={metrics} />
     </Container>
   );
 };
