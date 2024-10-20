@@ -46,13 +46,13 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user }) {
-      // Verifica si el `user` existe y agrégale las propiedades adicionales
+      
       if (user) {
-        const userWithToken = user as UserWithToken; // Hace el casting a UserWithToken
+        const userWithToken = user as UserWithToken; 
 
         token.user = {
-          ...userWithToken, // Asegura que las propiedades adicionales estén presentes
-          token: userWithToken.token, // Si el token está presente en el usuario
+          ...userWithToken, 
+          token: userWithToken.token, 
           user: userWithToken.user,
         };
       }

@@ -21,14 +21,6 @@ import { FinishBookCelebration } from "./FinishBookCelebration";
 import { DialogMetrics } from "./DialogMetrics";
 import { useReadingMetrics } from "../hooks/useReadingMetrics";
 
-// export interface Metrics {
-//   bookId: number | null;
-//   startTime: number | null;
-//   totalTime: number;
-//   pageReadingTimes: { [pageChapterKey: string]: number };
-//   lastPageTimestamp: number | null;
-// }
-
 interface BookDetailProps {
   bookId: number;
 }

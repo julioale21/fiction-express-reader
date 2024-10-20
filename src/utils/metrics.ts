@@ -1,5 +1,3 @@
-// src/app/books/utils/metricsUtils.ts
-
 import { Metrics } from "@/app/books/types";
 
 export const calculateTotalReadingTime = (metrics: Metrics): number => {
