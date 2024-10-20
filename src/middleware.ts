@@ -2,32 +2,17 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-// Define a list of file extensions that are typically public assets
-const publicFileExtensions = [
-  "css",
-  "js",
-  "json",
-  "jpg",
-  "jpeg",
-  "png",
-  "gif",
-  "svg",
-  "ico",
-  "woff",
-  "woff2",
-  "ttf",
-  "eot",
-];
-
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   const publicPaths = ["/", "/auth/login", "/auth/register"];
-  const isPublicPath = publicPaths.some((publicPath) => path === publicPath);
+  const isPublicPath = publicPaths.some((publicPath) =>
+    path.startsWith(publicPath)
+  );
 
-  // Check if the path is a public asset
-  const isPublicAsset = publicFileExtensions.some((ext) =>
-    path.endsWith(`.${ext}`)
+  const excludedDirectories = ["/_next/", "/public/"];
+  const isExcludedDirectory = excludedDirectories.some((excludedDirectory) =>
+    path.startsWith(excludedDirectory)
   );
 
   const token = await getToken({
@@ -35,7 +20,7 @@ export async function middleware(request: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  if (!isPublicPath && !isPublicAsset && !token) {
+  if (!isPublicPath && !isExcludedDirectory && !token) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
@@ -44,13 +29,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+    "/((?!_next|public|auth|login|register).*)",
   ],
 };
