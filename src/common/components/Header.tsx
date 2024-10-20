@@ -1,12 +1,15 @@
+
 "use client";
 import React from "react";
 import { AppBar, Toolbar, Box, Button, IconButton } from "@mui/material";
-
 import MenuIcon from "@mui/icons-material/Menu";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { menuItems } from "../constants/menu-items.constants";
 import theme from "@/config/themes/theme";
 import FictionExpressLogo from "./FictionExpressLogo";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface HeaderProps {
   isMobile: boolean;
@@ -15,6 +18,22 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ isMobile, onDrawerToggle }) => {
+  const router = useRouter();
+
+  const handleSignOut = () => {
+    signOut();
+  };
+
+  const buttonStyle = {
+    color: theme.palette.text.primary,
+    mx: 1,
+    "&:hover": {
+      bgcolor: "rgba(38, 77, 92, 0.1)",
+    },
+    textTransform: "uppercase",
+    fontWeight: "bold",
+  };
+
   return (
     <AppBar
       position="static"
@@ -43,26 +62,22 @@ const Header: React.FC<HeaderProps> = ({ isMobile, onDrawerToggle }) => {
         ) : (
           <Box>
             {menuItems.map((item) => (
-              <Button
+              <Link
+                href={item.href}
                 key={item.text}
-                startIcon={item.icon}
-                sx={{
-                  color: theme.palette.text.primary,
-                  mx: 1,
-                  "&:hover": {
-                    bgcolor: "rgba(38, 77, 92, 0.1)",
-                  },
-                  textTransform: "uppercase",
-                  fontWeight: "bold",
-                }}
+                passHref
+                style={{ textDecoration: "none" }}
               >
-                {item.text}
-              </Button>
+                <Button startIcon={item.icon} sx={buttonStyle}>
+                  {item.text}
+                </Button>
+              </Link>
             ))}
 
             <Button
-              onClick={() => signOut()}
-              sx={{ color: theme.palette.text.primary }}
+              onClick={handleSignOut}
+              startIcon={<LogoutIcon />}
+              sx={buttonStyle}
             >
               Cerrar sesión
             </Button>

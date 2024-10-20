@@ -1,7 +1,15 @@
-import MenuBookIcon from "@mui/icons-material/MenuBook";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
+import BarChartIcon from "@mui/icons-material/BarChart";
 
 export const menuItems = [
-  { text: "Libros", icon: <MenuBookIcon /> },
-  { text: "Mi Biblioteca", icon: <AutoStoriesIcon /> },
+  {
+    text: "Mi Biblioteca",
+    icon: <AutoStoriesIcon />,
+    href: "/books",
+  },
+  {
+    text: "Métricas",
+    icon: <BarChartIcon />,
+    href: "/books/metrics",
+  },
 ];

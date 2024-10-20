@@ -5,6 +5,7 @@ interface MetricsContextType {
   getMetrics: (bookId: number) => Metrics | null;
   saveMetrics: (metrics: Metrics) => void;
   clearMetrics: (bookId: number) => void;
+  getAllMetrics: () => Metrics[];
 }
 
 const MetricsContext = createContext<MetricsContextType | undefined>(undefined);
@@ -36,12 +37,32 @@ export const MetricsProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.removeItem(`book_metrics_${bookId}`);
   }, []);
 
+  const getAllMetrics = useCallback((): Metrics[] => {
+    const allMetrics: Metrics[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith("book_metrics_")) {
+        const metricsString = localStorage.getItem(key);
+        if (metricsString) {
+          try {
+            const metrics = JSON.parse(metricsString);
+            allMetrics.push(metrics);
+          } catch (error) {
+            console.error(`Error parsing metrics for key ${key}:`, error);
+          }
+        }
+      }
+    }
+    return allMetrics;
+  }, []);
+
   return (
     <MetricsContext.Provider
       value={{
         getMetrics,
         saveMetrics,
         clearMetrics,
+        getAllMetrics,
       }}
     >
       {children}

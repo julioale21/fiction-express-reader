@@ -10,7 +10,8 @@ export const calculateTotalReadingTime = (metrics: Metrics): number => {
 export const calculateAverageTimePerPage = (metrics: Metrics): number => {
   const totalTime = calculateTotalReadingTime(metrics);
   const pageCount = Object.keys(metrics.pageReadingTimes).length;
-  return pageCount > 0 ? totalTime / pageCount : 0;
+  const result = pageCount > 0 ? totalTime / pageCount : 0;
+  return Number(result.toFixed(2));
 };
 
 export const formatTime = (timeInSeconds: number): string => {
@@ -37,4 +38,10 @@ export const formatDate = (timestamp: number | null): string => {
     minute: "2-digit",
     second: "2-digit",
   });
+};
+
+export const formatDuration = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}m ${remainingSeconds}s`;
 };
