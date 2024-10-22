@@ -28,6 +28,8 @@ const useLoginForm = () => {
     if (passwordInputRef.current) passwordInputRef.current.readOnly = false;
   }, []);
 
+  console.log({ isLoading });
+
   const onSubmit = async (data: LoginFormData) => {
     setError(null);
     setIsLoading(true);
@@ -37,8 +39,6 @@ const useLoginForm = () => {
       password: data.password,
       redirect: false,
     });
-
-    setIsLoading(false);
 
     if (result?.error) {
       console.error(result.error);

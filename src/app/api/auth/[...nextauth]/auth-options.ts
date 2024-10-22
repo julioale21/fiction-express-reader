@@ -24,7 +24,6 @@ export const authOptions: NextAuthOptions = {
           if (data && data.token) {
             const { token, ...userInfo } = data;
             return {
-              id: userInfo.id.toString(),
               token,
               user: {
                 id: userInfo.id,
