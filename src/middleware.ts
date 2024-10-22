@@ -44,8 +44,8 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   // Define protected paths
-  const protectedPaths = ["/books/", "/metrics"];
-  const isProtectedPath = protectedPaths.some((protectedPath) =>
+  const protectedPaths = ['/books/', '/metrics'];
+  const isProtectedPath = protectedPaths.some(protectedPath => 
     path.startsWith(protectedPath)
   );
 
@@ -54,21 +54,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // For protected paths, check for authentication token
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
 
-  // If no token is present for protected paths, redirect to login
-  if (!token) {
-    return NextResponse.redirect(new URL("/auth/login", request.url));
-  }
-
-  return NextResponse.next();
 }
 
 // Configure matcher to only check /books/* and /metrics routes
 export const config = {
-  matcher: ["/books/:path*", "/metrics"],
+  matcher: ['/books/:path*', '/metrics']
 };
